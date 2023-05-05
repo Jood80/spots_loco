@@ -1,34 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
+	"example/routes"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	
-	if err !=nil {
-		http.Error(w, "Error reading body", http.StatusInternalServerError)
-		return
-	}
-
-	bodyString := string(body)
-
-	fmt.Println("Request body: ", bodyString)
-	fmt.Fprintf(w, "You sent this in the request body: %s", bodyString)
-}
 
 func main() {
-	homeHandler := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome ya ana!")
-	}
-
-	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/test", testHandler)
-
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
-	}
+	r :=mux.NewRouter()
+	routes.RegisterRoutes(r)
+	
+	log.Println("Server is listening on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

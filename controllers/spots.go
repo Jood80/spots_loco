@@ -2,36 +2,22 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
-type TestResponse struct {
-	Message string `json:"message"`
-}
 
-func Test(w http.ResponseWriter, r *http.Request) {
-	response := TestResponse{
-		Message: "This is a test endpoint",
-	}
+func GetSpots(w http.ResponseWriter, r *http.Request) {
+	lat := r.URL.Query().Get("lat")
+	long := r.URL.Query().Get("long")
+	radius := r.URL.Query().Get("radius")
+	shape := r.URL.Query().Get("type")
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-
-
-func bodyHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	
-	if err !=nil {
-		http.Error(w, "Error reading body", http.StatusInternalServerError)
+	if lat == "" || long == "" || radius == "" || shape == "" {
+		http.Error(w, "Missing query parameters", http.StatusBadRequest)
 		return
 	}
 
-	bodyString := string(body)
 
-	fmt.Println("Request body: ", bodyString)
-	fmt.Fprintf(w, "You sent this in the request body: %s", bodyString)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(lat+long+radius+shape)
 }

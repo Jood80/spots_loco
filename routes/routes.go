@@ -3,11 +3,10 @@ package routes
 import (
 	"example/controllers"
 
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 )
 
-func RegisterRoutes(r *mux.Router){
-	r.HandleFunc("/", controllers.Hello)
-	r.HandleFunc("/test", controllers.Test)
-	r.HandleFunc("/spots", controllers.GetSpots)
+func RegisterRoutes(router *httprouter.Router) {
+	router.GET("/", controllers.Hello)
+	router.GET("/spots", controllers.GetSpots)
 }

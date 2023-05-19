@@ -5,14 +5,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 )
 
-
 func main() {
-	r :=mux.NewRouter()
+	r := httprouter.New()
 	routes.RegisterRoutes(r)
-	
+
 	log.Println("Server is listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

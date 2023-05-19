@@ -1,6 +1,7 @@
 package main
 
 import (
+	"example/config"
 	"example/routes"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 )
 
 func main() {
+	config.ConnectDB()
 	r := httprouter.New()
 	routes.RegisterRoutes(r)
 

@@ -2,27 +2,19 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"example/service"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-func GetSpots(w http.ResponseWriter, r *http.Request) {
-	lat := r.URL.Query().Get("lat")
-	long := r.URL.Query().Get("long")
-	radius := r.URL.Query().Get("radius")
-	shape := r.URL.Query().Get("type")
+func GetSpots(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	lat := r.Context().Value("lat").(float64)
+	long := r.Context().Value("long").(float64)
+	radius := r.Context().Value("radius").(float64)
+	shape := r.Context().Value("shape").(string)
 
-	if lat == "" || long == "" || radius == "" || shape == "" {
-		http.Error(w, "Missing query parameters", http.StatusBadRequest)
-		return
-	}
-
-	latFlo, err := strconv.ParseFloat(lat, 64)
-	longFlo, err := strconv.ParseFloat(long, 64)
-	radiusFlo, err := strconv.ParseFloat(radius, 64)
-
-	jsonData, err := service.GetSpotData(latFlo, longFlo, radiusFlo, shape)
+	jsonData, err := service.GetSpotData(lat, long, radius, shape)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

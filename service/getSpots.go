@@ -6,19 +6,19 @@ import (
 	"example/database"
 )
 
-func GetSpotData(latFlo, longFlo, radiusFlo float64, shape string) ([]byte, error) {
+func GetSpotData(lat, long, radius float64, shape string) ([]byte, error) {
 	db, err := config.ConnectDB()
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	rowData, err := database.ExecuteShapeQuery(shape, db, latFlo, longFlo, radiusFlo)
+	rowData, err := database.ExecuteShapeQuery(shape, db, lat, long, radius)
 	if err != nil {
 		return nil, err
 	}
 
-	newData, err := database.ExecuteThirdQuery(db, latFlo, longFlo, radiusFlo)
+	newData, err := database.ExecuteThirdQuery(db, lat, long, radius)
 	if err != nil {
 		return nil, err
 	}

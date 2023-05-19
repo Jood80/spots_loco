@@ -3,7 +3,7 @@ package service
 import (
 	"encoding/json"
 	"example/config"
-	"example/database"
+	"example/model"
 )
 
 func GetSpotData(lat, long, radius float64, shape string) ([]byte, error) {
@@ -13,12 +13,12 @@ func GetSpotData(lat, long, radius float64, shape string) ([]byte, error) {
 	}
 	defer db.Close()
 
-	rowData, err := database.ExecuteShapeQuery(shape, db, lat, long, radius)
+	rowData, err := model.ExecuteShapeQuery(shape, db, lat, long, radius)
 	if err != nil {
 		return nil, err
 	}
 
-	newData, err := database.ExecuteThirdQuery(db, lat, long, radius)
+	newData, err := model.ExecuteThirdQuery(db, lat, long, radius)
 	if err != nil {
 		return nil, err
 	}

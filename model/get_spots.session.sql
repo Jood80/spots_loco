@@ -1,3 +1,9 @@
+/** 
+	************************************
+	* Get Spots in Circle Or Square Area
+	************************************
+*/
+
 -- radius = 10 | lat = 1 | long= 2 | shape = Square
 
 SELECT id, ST_X(coordinates::geometry) AS lat, ST_Y(coordinates::geometry)AS long

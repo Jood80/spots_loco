@@ -11,6 +11,7 @@ func BuildSchema(db *sql.DB) error {
 	if err != nil {
 		log.Fatalf("Failed to read SQL file: %v", err)
 	}
+
 	// Execute the SQL statements
 	_, err = db.Exec(string(sqlFile))
 	if err != nil {

@@ -24,22 +24,22 @@ type Rows struct {
 	Long float64 `json:"long"`
 }
 
-func GetSquareQuery(latFlo, longFlo, radiusFlo float64) string {
+func GetSquareQuery(lat, long, radius float64) string {
 	return fmt.Sprintf(`
 	SELECT DISTINCT id, ST_X(coordinates::geometry) AS lat, ST_Y(coordinates::geometry) AS long
 	FROM "MY_TABLE"
 	WHERE ST_X(coordinates::geometry) >= %f AND ST_X(coordinates::geometry) <= %f
 	AND ST_Y(coordinates::geometry) >= %f AND ST_Y(coordinates::geometry) <= %f`,
-		latFlo-radiusFlo, latFlo+radiusFlo, longFlo-radiusFlo, longFlo+radiusFlo)
+		lat-radius, lat+radius, long-radius, long+radius)
 }
 
-func GetCircleQuery(latFlo, longFlo, radiusFlo float64) string {
+func GetCircleQuery(lat, long, radius float64) string {
 	return fmt.Sprintf(`
 	SELECT DISTINCT id, ST_X(coordinates::geometry) AS lat, ST_Y(coordinates::geometry) AS long
 	FROM "MY_TABLE"
 	WHERE SQRT(ABS((%f - ST_X(coordinates::geometry)) * (%f - ST_X(coordinates::geometry)))
 	+ ABS((%f - ST_Y(coordinates::geometry)) * (%f - ST_Y(coordinates::geometry)))) <= %f`,
-		latFlo, latFlo, longFlo, longFlo, radiusFlo)
+		lat, lat, long, long, radius)
 }
 
 func GetThirdQuery() string {
@@ -64,14 +64,14 @@ func GetThirdQuery() string {
 			END ASC, rating DESC`
 }
 
-func ExecuteShapeQuery(shape string, db *sql.DB, latFlo, longFlo, radiusFlo float64) (*sql.Rows, error) {
+func ExecuteShapeQuery(shape string, db *sql.DB, lat, long, radius float64) (*sql.Rows, error) {
 	var query string
 
 	switch shape {
 	case "square":
-		query = GetSquareQuery(latFlo, longFlo, radiusFlo)
+		query = GetSquareQuery(lat, long, radius)
 	case "circle":
-		query = GetCircleQuery(latFlo, longFlo, radiusFlo)
+		query = GetCircleQuery(lat, long, radius)
 	default:
 		return nil, fmt.Errorf("Invalid shape: %s", shape)
 	}
@@ -90,7 +90,7 @@ func ExecuteShapeQuery(shape string, db *sql.DB, latFlo, longFlo, radiusFlo floa
 	return rows, nil
 }
 
-func ExecuteThirdQuery(db *sql.DB, latFlo, longFlo, radiusFlo float64) ([]Spot, error) {
+func ExecuteThirdQuery(db *sql.DB, lat, long, radius float64) ([]Spot, error) {
 	thirdQuery := `
 	SELECT
 		id,
@@ -111,7 +111,7 @@ func ExecuteThirdQuery(db *sql.DB, latFlo, longFlo, radiusFlo float64) ([]Spot, 
 			ELSE SQRT(ABS(($1 - ST_X(coordinates::geometry)) * ($1 - ST_X(coordinates::geometry))) + ABS(($2 - ST_Y(coordinates::geometry)) * ($2 - ST_Y(coordinates::geometry))))
 		END ASC, rating DESC`
 
-	rows, err := db.Query(thirdQuery, latFlo, longFlo, radiusFlo*radiusFlo)
+	rows, err := db.Query(thirdQuery, lat, long, radius*radius)
 	if err != nil {
 		return nil, err
 	}

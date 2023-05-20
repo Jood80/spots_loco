@@ -25,3 +25,5 @@
 ...
 ]
 ```
+<img src ="https://github.com/Jood80/spots_loco/assets/56412800/cc7b725b-ba33-4d82-a31a-3e8f84b79e5b" height="400" width=550 />
+      
